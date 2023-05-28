@@ -34,8 +34,12 @@ static std::filesystem::path snapshot(const std::filesystem::path& path)
         static const char* DOWSTR[] = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
         auto dow = path / ".snapshots" / DOWSTR[localtime(&subvol.otime.tv_sec)->tm_wday];
         if (btrfs_util_is_subvolume(dow.c_str()) == BTRFS_UTIL_OK) {
-            btrfs_util_delete_subvolume(dow.c_str(), BTRFS_UTIL_DELETE_SUBVOLUME_RECURSIVE);
-            std::cerr << "Snapshot " << dow << " deleted" << std::endl;
+            rst = btrfs_util_delete_subvolume(dow.c_str(), BTRFS_UTIL_DELETE_SUBVOLUME_RECURSIVE);
+            if (rst == BTRFS_UTIL_OK) {
+                std::cerr << "Snapshot " << dow << " deleted" << std::endl;
+            } else {
+                std::cerr <<  "Deleting subvolume " << dow.string() << " failed(" << btrfs_util_strerror(rst) << ")" << std::endl;
+            }
         }
         std::filesystem::rename(head, dow);
         std::cerr << "Snapshot " << head << " renamed to " << dow << std::endl;
