@@ -69,7 +69,7 @@ int main(int argc, char* argv[])
     try {
         auto path = program.get<std::string>("path");
         auto rst = snapshot(path);
-        std::cout << "Snapshot " << rst << " created." << std::endl;
+        std::cout << rst.string() << std::endl;
     }
     catch (const std::exception& e) {
         std::cerr << e.what() << std::endl;
